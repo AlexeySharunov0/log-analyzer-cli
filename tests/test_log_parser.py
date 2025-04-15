@@ -1,9 +1,6 @@
-# tests/test_log_parser.py
-# <<< КОД ОСТАЕТСЯ ПРЕЖНИМ, КАК В ПРЕДЫДУЩЕМ ОТВЕТЕ >>>
 import pytest
 from log_analyzer.log_parser import parse_log_line
 
-# Параметризация тестов для проверки разных валидных строк
 @pytest.mark.parametrize(
     "line, expected",
     [
@@ -19,17 +16,16 @@ def test_parse_log_line_valid(line, expected):
     """Тестирует парсинг корректных строк django.request."""
     assert parse_log_line(line) == expected
 
-# Параметризация тестов для проверки нерелевантных или неверных строк
 @pytest.mark.parametrize(
     "line",
     [
-        "INFO:django.server:\"GET /api/v1/users/ HTTP/1.1\" 200 1863", # Не тот логгер
-        "INFO:some_other_logger:This is not a request log.", # Другой логгер
-        "DEBUG:django.request No path here", # Нет корректного пути
-        "WARNING:django.request:", # Пустое сообщение
-        "INFO django.request GET /api/v1/users/ 123 45ms", # Неверный формат строки
-        "Just some random text", # Вообще не лог
-        "", # Пустая строка
+        "INFO:django.server:\"GET /api/v1/users/ HTTP/1.1\" 200 1863", 
+        "INFO:some_other_logger:This is not a request log.", 
+        "DEBUG:django.request No path here", 
+        "WARNING:django.request:", 
+        "INFO django.request GET /api/v1/users/ 123 45ms", 
+        "Just some random text", 
+        "", 
     ],
 )
 def test_parse_log_line_invalid_or_irrelevant(line):

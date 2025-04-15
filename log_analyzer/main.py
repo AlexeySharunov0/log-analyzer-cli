@@ -2,7 +2,6 @@ import argparse
 import sys
 from pathlib import Path
 from typing import List
-
 from log_analyzer.analyzer import analyze_logs
 from log_analyzer.reporting import get_report_generator
 
@@ -31,7 +30,6 @@ def main() -> None:
     """Основная функция MVP."""
     args = parse_arguments()
 
-    # Проверяем существование файлов
     log_file_paths: List[Path] = []
     for file_str in args.log_files:
         path = Path(file_str)
@@ -41,12 +39,8 @@ def main() -> None:
         log_file_paths.append(path)
 
     try:
-        # Анализ логов через analyze_logs
         aggregated_data = analyze_logs(log_file_paths, args.report)
-
-        # Получаем генератор отчета
         report_generator = get_report_generator(args.report)
-        # Генерируем отчет
         report_generator.generate(aggregated_data)
 
     except Exception as e:

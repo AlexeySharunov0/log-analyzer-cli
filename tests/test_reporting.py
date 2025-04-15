@@ -1,5 +1,3 @@
-# tests/test_reporting.py
-# <<< КОД ОСТАЕТСЯ ПРЕЖНИМ, КАК В ПРЕДЫДУЩЕМ ОТВЕТЕ >>>
 import pytest
 from io import StringIO
 import sys
@@ -10,11 +8,11 @@ from log_analyzer.reporting import (
     get_report_generator,
     get_available_report_names,
     AVAILABLE_REPORTS,
-    BaseReport # Импортируем BaseReport для проверки
+    BaseReport 
 )
-from log_analyzer.analyzer import HandlerData # Импортируем тип
+from log_analyzer.analyzer import HandlerData 
 
-# Фикстура для тестовых данных (оставляем, т.к. она простая)
+# Фикстура для тестовых данных 
 @pytest.fixture
 def sample_handler_data() -> HandlerData:
     data: HandlerData = defaultdict(lambda: defaultdict(int))
@@ -26,20 +24,17 @@ def sample_handler_data() -> HandlerData:
     return data
 
 def test_handlers_report_generation(sample_handler_data, capsys):
-    # ... (остальной код теста без изменений) ...
     report = HandlersReport()
     report.generate(sample_handler_data)
     captured = capsys.readouterr()
     output = captured.out
 
-    assert "Total requests: 26" in output # 15+5+3+1+2 = 26
+    assert "Total requests: 26" in output 
     assert "HANDLER" in output
     assert "DEBUG" in output
-    # ... и т.д. ...
 
 
 def test_handlers_report_empty_data(capsys):
-    # ... (без изменений) ...
     report = HandlersReport()
     empty_data: HandlerData = defaultdict(lambda: defaultdict(int))
     report.generate(empty_data)
@@ -47,13 +42,9 @@ def test_handlers_report_empty_data(capsys):
     assert "No relevant log data found" in captured.out
 
 def test_get_report_generator():
-    # ... (без изменений) ...
     handlers_gen = get_report_generator("handlers")
     assert isinstance(handlers_gen, HandlersReport)
-    # ... и т.д. ...
 
 def test_get_available_report_names():
-    # ... (без изменений) ...
     names = get_available_report_names()
     assert isinstance(names, list)
-    # ... и т.д. ...

@@ -1,12 +1,9 @@
-# tests/test_analyzer.py
 import pytest
 from pathlib import Path
 from collections import defaultdict
 from log_analyzer.analyzer import analyze_logs, _process_file_for_handlers, _merge_handler_results, HandlerData
 
-# Убрали фикстуру fixture_path
 
-# Используем tmp_path для создания временных файлов в тестах
 def test_process_file_for_handlers_ok(tmp_path):
     """Тестирует обработку файла с корректными данными (файл создается временно)."""
     log_content = """
@@ -23,30 +20,27 @@ WARNING:django.request:POST /api/v1/auth/login/ 401 18ms
 DEBUG:django.request:GET /admin/ 200 20ms
 INFO:django.db.backends:Connection timed out
 """
-    # Создаем временный файл и пишем в него контент
     file_path = tmp_path / "test_ok.log"
     file_path.write_text(log_content)
 
-    # Вызываем тестируемую функцию с путем к временному файлу
     result = _process_file_for_handlers(file_path)
 
     assert isinstance(result, defaultdict)
-    # Проверяем те же значения, что и раньше
     assert result["/api/v1/users/"]["INFO"] == 1
-    assert result["/api/v1/users/"]["DEBUG"] == 1 # Было 2 запроса DEBUG к users
+    assert result["/api/v1/users/"]["DEBUG"] == 1 
     assert result["/api/v1/users/"]["ERROR"] == 1
     assert result["/api/v1/users/"]["CRITICAL"] == 1
     assert result["/api/v1/auth/login/"]["DEBUG"] == 1
     assert result["/api/v1/auth/login/"]["WARNING"] == 1
     assert result["/admin/"]["WARNING"] == 1
-    assert result["/admin/"]["DEBUG"] == 1 # Было 2 запроса DEBUG к admin
+    assert result["/admin/"]["DEBUG"] == 1 
     assert result["/api/v1/items/"]["INFO"] == 1
     assert "INFO:django.server" not in result
 
 def test_process_file_for_handlers_empty(tmp_path):
     """Тестирует обработку пустого файла (файл создается временно)."""
     file_path = tmp_path / "empty.log"
-    file_path.touch() # Создаем пустой файл
+    file_path.touch() 
     result = _process_file_for_handlers(file_path)
     assert isinstance(result, defaultdict)
     assert not result
@@ -64,19 +58,17 @@ WARNING:some_logger:Some random message
     assert isinstance(result, defaultdict)
     assert not result
 
-# Тест _merge_handler_results не меняется, он не использовал файлы
 def test_merge_handler_results():
     """Тестирует слияние результатов из нескольких словарей."""
-    # <<< КОД ОСТАЕТСЯ ПРЕЖНИМ >>>
     dict1: HandlerData = defaultdict(lambda: defaultdict(int))
     dict1["/path1"]["INFO"] = 10
     dict1["/path1"]["DEBUG"] = 5
     dict1["/path2"]["INFO"] = 2
 
     dict2: HandlerData = defaultdict(lambda: defaultdict(int))
-    dict2["/path1"]["INFO"] = 7 # Добавляется к существующему
-    dict2["/path2"]["WARNING"] = 3 # Новый уровень для path2
-    dict2["/path3"]["ERROR"] = 1 # Новый путь
+    dict2["/path1"]["INFO"] = 7 
+    dict2["/path2"]["WARNING"] = 3 
+    dict2["/path3"]["ERROR"] = 1 
 
     dict_empty: HandlerData = defaultdict(lambda: defaultdict(int))
 
@@ -87,7 +79,7 @@ def test_merge_handler_results():
     assert merged["/path2"]["INFO"] == 2
     assert merged["/path2"]["WARNING"] == 3
     assert merged["/path3"]["ERROR"] == 1
-    assert len(merged) == 3 # Убедимся, что нет лишних ключей
+    assert len(merged) == 3 
 
 
 def test_analyze_logs_single_file(tmp_path, capsys):
@@ -98,7 +90,7 @@ def test_analyze_logs_single_file(tmp_path, capsys):
     log_files = [file_path]
 
     result = analyze_logs(log_files, "handlers")
-    captured = capsys.readouterr() # Перехватываем stdout
+    captured = capsys.readouterr()
 
     assert "Analyzing for 'handlers':" in captured.out
     assert "Analysis complete." in captured.out
@@ -118,16 +110,15 @@ def test_analyze_logs_multiple_files(tmp_path, capsys):
     f2.write_text(log_content2)
     f3.write_text(log_content_bad)
 
-    log_files = [f1, f2, f3, f1] # Обрабатываем первый файл дважды, плохой файл игнорируется
+    log_files = [f1, f2, f3, f1] 
     result = analyze_logs(log_files, "handlers")
     captured = capsys.readouterr()
 
-    assert captured.out.count("Analyzing for 'handlers':") == 4 # 4 файла передано
+    assert captured.out.count("Analyzing for 'handlers':") == 4 
     assert "Analysis complete." in captured.out
-    # Данные должны удвоиться для path1 INFO и появиться DEBUG
     assert result["/path1"]["INFO"] == 2
     assert result["/path1"]["DEBUG"] == 1
-    assert len(result) == 1 # Только один хэндлер '/path1' должен быть
+    assert len(result) == 1 
 
 def test_analyze_logs_unknown_report_type(tmp_path, capsys):
     """Тестирует analyze_logs с неизвестным типом отчета (файл не важен)."""
