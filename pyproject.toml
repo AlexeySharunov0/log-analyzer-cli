@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "log_analyzer"
+version = "0.1.0"
+# Добавьте другую мета-информацию при необходимости
+# dependencies = [] # Основные зависимости не нужны, т.к. только стандартная библиотека
+
+[project.optional-dependencies]
+# Зависимости для разработки и тестирования
+test = [
+    "pytest>=7.0",        # Фреймворк для тестирования
+    "pytest-cov>=3.0",    # Для измерения покрытия тестами
+]
+
+[tool.setuptools.packages.find]
+include = ["log_analyzer"]
+exclude = ["logs"]
+
+[tool.pytest.ini_options]
+# Указываем Python искать модули в текущей директории (где лежит папка log_analyzer)
+pythonpath = [
+  "."
+]
+# Указываем папку с тестами
+testpaths = [
+    "tests"
+]
+# Добавляем опции для pytest-cov
+addopts = "--cov=log_analyzer --cov-report term-missing"
+
+[tool.coverage.run]
+# Исключаем файлы, которые не нужно включать в отчет о покрытии
+omit = [
+    "log_analyzer/__init__.py",
+    "tests/*", # Исключаем сами тесты
+]
+
+[tool.coverage.report]
+# Требуемый минимальный процент покрытия (можно убрать или изменить)
+fail_under = 75

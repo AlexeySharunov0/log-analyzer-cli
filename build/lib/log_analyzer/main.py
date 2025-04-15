@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import List, Dict, DefaultDict, Optional, Sequence
 
 # Импортируем парсер из соседнего файла
-from log_parser import parse_log_line, LOG_LEVELS
+from log_analyzer.log_parser import parse_log_line, LOG_LEVELS
 
 # Тип для хранения агрегированных данных: {handler: {level: count}}
 HandlerData = DefaultDict[str, DefaultDict[str, int]]

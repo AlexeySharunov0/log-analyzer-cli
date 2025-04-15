@@ -2,7 +2,7 @@
 import re
 from typing import Optional, Dict
 
-# Уровни логирования (можно вынести, но для MVP оставим здесь)
+# Уровни логирования 
 LOG_LEVELS: list[str] = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 # Regex для захвата уровня, логгера и сообщения
